@@ -234,4 +234,13 @@ class Client
     {
         $this->cli->close();
     }
+
+    public function __set(string $name, $val)
+    {
+        if (!isset($this->$name)) {
+            return;
+        }
+
+        $this->$name = $val;
+    }
 }

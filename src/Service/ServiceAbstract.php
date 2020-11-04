@@ -14,6 +14,7 @@ namespace Kovey\Rpc\Client\Service;
 use Kovey\Library\Exception\ProtocolException;
 use Kovey\Rpc\Client\Client;
 
+#[\Attribute]
 abstract class ServiceAbstract
 {
 	/**
@@ -63,7 +64,8 @@ abstract class ServiceAbstract
         if (!$this->cli->send(array(
             'p' => $this->getServiceName(),
             'm' => $method,
-            'a' => $args
+            'a' => $args,
+            't' => $this->traceId
         ))) {
             $this->cli->close();
 			throw new ProtocolException($this->cli->getError(), 1003, 'send_error');
@@ -72,7 +74,7 @@ abstract class ServiceAbstract
         $result = $this->cli->recv();
         $this->cli->close();
 		if (empty($result)) {
-			throw new ProtocolException('resopone is error.', 1000, 'requset_error');
+			throw new ProtocolException('resopone is error.', 1000, 'request_error');
 		}
 
 		if ($result['type'] !== 'success') {

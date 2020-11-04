@@ -15,6 +15,7 @@ use Kovey\Library\Util\Util;
 use Kovey\Library\Encryption\Encryption;
 use Kovey\Library\Exception\ProtocolException;
 use Kovey\Library\Protocol\ProtocolInterface;
+use Kovey\Library\Util\Json as JS;
 
 class Json implements ProtocolInterface
 {
@@ -56,9 +57,9 @@ class Json implements ProtocolInterface
 	/**
 	 * @description 明文
 	 *
-	 * @var string
+	 * @var Array
 	 */
-	private string $clear;
+	private Array $clear;
 
 	/**
 	 * @description 加密类型
@@ -73,6 +74,13 @@ class Json implements ProtocolInterface
 	 * @var bool
 	 */
 	private bool $isPub;
+
+    /**
+     * @description trace Id
+     *
+     * @var string
+     */
+    private string $traceId;
 
 	/**
 	 * @description 构造函数
@@ -164,8 +172,18 @@ class Json implements ProtocolInterface
 	 */
 	public function getClear() : string
 	{
-		return $this->clear;
+		return JS::encode($this->clear);
 	}
+
+    /**
+     * @description get traceId
+     *
+     * @return string
+     */
+    public function getTraceId() : string
+    {
+        return $this->traceId;
+    }
 
 	/**
 	 * @description 打包
