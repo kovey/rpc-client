@@ -161,7 +161,7 @@ class Client
 			return $conf;
 		}
 
-		return false;
+		return array();
 	}
 
 	/**
