@@ -78,7 +78,7 @@ abstract class ServiceAbstract
 		}
 
 		if ($result['type'] !== 'success') {
-			throw new ProtocolException($result['err'], $result['code'], $result['type']);
+			throw new ProtocolException($result['err'], $result['code'], $result['type'], $result['trace']);
 		}
 
 		return $result['result'];
