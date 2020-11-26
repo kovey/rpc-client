@@ -27,55 +27,55 @@ class Client
      */
     private Array $events;
 
-	/**
-	 * @description 底层客户端
-	 *
-	 * @var Swoole\Coroutine\Client
-	 */
+    /**
+     * @description 底层客户端
+     *
+     * @var Swoole\Coroutine\Client
+     */
     private \Swoole\Coroutine\Client $cli;
 
-	/**
-	 * @description 服务端配置
-	 *
-	 * @var Array
-	 */
-	private Array $configs;
+    /**
+     * @description 服务端配置
+     *
+     * @var Array
+     */
+    private Array $configs;
 
-	/**
-	 * @description 客户端配置
-	 *
-	 * @var Array
-	 */
-	private Array $conf;
+    /**
+     * @description 客户端配置
+     *
+     * @var Array
+     */
+    private Array $conf;
 
-	/**
-	 * @description 当前使用配置
-	 *
-	 * @var int
-	 */
-	private int $current = 0;
+    /**
+     * @description 当前使用配置
+     *
+     * @var int
+     */
+    private int $current = 0;
 
-	/**
-	 * @description 不可用的配置
-	 *
-	 * @var Array
-	 */
-	private Array $unavailables = array();
+    /**
+     * @description 不可用的配置
+     *
+     * @var Array
+     */
+    private Array $unavailables = array();
 
-	/**
-	 * @description 错误信息
-	 *
-	 * @var string
-	 */
-	private string $error = '';
+    /**
+     * @description 错误信息
+     *
+     * @var string
+     */
+    private string $error = '';
 
-	/**
-	 * @description 构造函数
-	 *
-	 * @param Array $configs
-	 *
-	 * @return Client
-	 */
+    /**
+     * @description 构造函数
+     *
+     * @param Array $configs
+     *
+     * @return Client
+     */
     public function __construct(Array $configs)
     {
         $this->cli = new \Swoole\Coroutine\Client(SWOOLE_SOCK_TCP);
@@ -110,67 +110,67 @@ class Client
         return $this;
     }
 
-	/**
-	 * @description 链接服务器端
-	 *
-	 * @return bool
-	 */
+    /**
+     * @description 链接服务器端
+     *
+     * @return bool
+     */
     public function connect() : bool
     {
         $this->error = '';
-		$count = 0;
-		do {
-			$count ++;
-			$conf = $this->getConf();
-			if (empty($conf)) {
-				$this->error .= 'connected failure to server, available config not found' . PHP_EOL;
-				return false;
-			}
+        $count = 0;
+        do {
+            $count ++;
+            $conf = $this->getConf();
+            if (empty($conf)) {
+                $this->error .= 'connected failure to server, available config not found' . PHP_EOL;
+                return false;
+            }
 
-			$this->conf = $conf;
-			$result = $this->cli->connect($this->conf['host'], $this->conf['port']);
-			if ($result || intval($this->cli->errCode) == 0) {
-				return true;
-			}
+            $this->conf = $conf;
+            $result = $this->cli->connect($this->conf['host'], $this->conf['port']);
+            if ($result || intval($this->cli->errCode) == 0) {
+                return true;
+            }
 
-			$this->error .= sprintf('connected failure to server: %s:%s,error: %s', $this->conf['host'], $this->conf['port'], socket_strerror($this->cli->errCode)) . PHP_EOL;
-			$this->unavailables[$this->current] = 1;
-		} while ($count < 3);
+            $this->error .= sprintf('connected failure to server: %s:%s,error: %s', $this->conf['host'], $this->conf['port'], socket_strerror($this->cli->errCode)) . PHP_EOL;
+            $this->unavailables[$this->current] = 1;
+        } while ($count < 3);
 
-		return false;
+        return false;
     }
 
-	/**
-	 * @description 获取可用的服务端配置
-	 *
-	 * @return Array
-	 */
-	private function getConf() : Array
-	{
-		$this->current = array_rand($this->configs, 1);
-		if (!isset($this->unavailables[$this->current])) {
-			return $this->configs[$this->current];
-		}
+    /**
+     * @description 获取可用的服务端配置
+     *
+     * @return Array
+     */
+    private function getConf() : Array
+    {
+        $this->current = array_rand($this->configs, 1);
+        if (!isset($this->unavailables[$this->current])) {
+            return $this->configs[$this->current];
+        }
 
-		foreach ($this->configs as $index => $conf) {
-			if (isset($this->unavailables[$index])) {
-				continue;
-			}
+        foreach ($this->configs as $index => $conf) {
+            if (isset($this->unavailables[$index])) {
+                continue;
+            }
 
-			$this->current = $index;
-			return $conf;
-		}
+            $this->current = $index;
+            return $conf;
+        }
 
-		return array();
-	}
+        return array();
+    }
 
-	/**
-	 * @description 向服务端发送数据
-	 *
-	 * @param Array $data
-	 *
-	 * @return bool
-	 */
+    /**
+     * @description 向服务端发送数据
+     *
+     * @param Array $data
+     *
+     * @return bool
+     */
     public function send(Array $data) : bool
     {
         if (isset($this->events['pack'])) {
@@ -179,28 +179,28 @@ class Client
             $data = Json::pack($data, $this->conf['secret_key'], $this->conf['encrypt_type'] ?? 'aes', true);
         }
 
-		if (!$data) {
-			return false;
-		}
+        if (!$data) {
+            return false;
+        }
         $result = $this->cli->send($data);
-		if (!$result) {
-			$this->error = sprintf('send failure to server: %s:%s, error: %s', $this->conf['host'], $this->conf['port'], socket_strerror($this->cli->errCode));
-		}
+        if (!$result) {
+            $this->error = sprintf('send failure to server: %s:%s, error: %s', $this->conf['host'], $this->conf['port'], socket_strerror($this->cli->errCode));
+        }
 
-		return $result;
+        return $result;
     }
 
-	/**
-	 * @description 接收数据
-	 *
-	 * @return Array
-	 */
+    /**
+     * @description 接收数据
+     *
+     * @return Array
+     */
     public function recv() : Array
     {
         $packet = $this->cli->recv(self::TIME_OUT);
-		if (empty($packet)) {
-			return array();
-		}
+        if (empty($packet)) {
+            return array();
+        }
 
         if (isset($this->events['unpack'])) {
             $packet = call_user_func($this->events['unpack'], $this->conf['secret_key'], $this->conf['encrypt_type'] ?? 'aes', true);
@@ -215,21 +215,21 @@ class Client
         return $packet;
     }
 
-	/**
-	 * @description 获取错误信息
-	 *
-	 * @return string
-	 */
+    /**
+     * @description 获取错误信息
+     *
+     * @return string
+     */
     public function getError() : string
     {
-		return $this->error;
+        return $this->error;
     }
 
-	/**
-	 * @description 关闭链接
-	 *
-	 * @return null
-	 */
+    /**
+     * @description 关闭链接
+     *
+     * @return null
+     */
     public function close()
     {
         $this->cli->close();
