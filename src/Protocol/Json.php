@@ -83,6 +83,13 @@ class Json implements ProtocolInterface
     private string $traceId;
 
     /**
+     * @description from
+     *
+     * @var string
+     */
+    private string $from;
+
+    /**
      * @description 构造函数
      *
      * @param string $body
@@ -183,6 +190,16 @@ class Json implements ProtocolInterface
     public function getTraceId() : string
     {
         return $this->traceId;
+    }
+
+    /**
+     * @description get from
+     *
+     * @return string
+     */
+    public function getFrom() : string
+    {
+        return $this->from;
     }
 
     /**

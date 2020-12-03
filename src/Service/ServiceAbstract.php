@@ -65,7 +65,8 @@ abstract class ServiceAbstract
             'p' => $this->getServiceName(),
             'm' => $method,
             'a' => $args,
-            't' => $this->traceId
+            't' => $this->traceId,
+            'f' => $this->getCurrentServiceName()
         ))) {
             $this->cli->close();
             throw new ProtocolException($this->cli->getError(), 1003, 'send_error');
@@ -90,4 +91,11 @@ abstract class ServiceAbstract
      * @return string
      */
     abstract protected function getServiceName() : string;
+
+    /**
+     * @description 获取当前服务名称
+     *
+     * @return string
+     */
+    abstract protected function getCurrentServiceName() : string;
 }
