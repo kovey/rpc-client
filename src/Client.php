@@ -89,6 +89,7 @@ class Client
 
         $this->configs = $configs;
         $this->events = array();
+        $this->conf = array();
     }
 
     /**

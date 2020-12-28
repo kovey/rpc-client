@@ -16,13 +16,13 @@ use Kovey\Library\Util\Json;
 
 class Monitor
 {
-    private $cli;
+    private Client $cli;
 
-    private $error;
+    private string $error = '';
 
-    private $project;
+    private string $project;
 
-    private $from;
+    private string $from;
 
     public function __construct(Array $config, string $project, string $from)
     {

@@ -24,28 +24,28 @@ class Json implements ProtocolInterface
      *
      * @var string
      */
-    private string $path;
+    private string $path = '';
 
     /**
      * @description 方法
      *
      * @var string
      */
-    private string $method;
+    private string $method = '';
 
     /**
      * @description 参数
      *
      * @var Array
      */
-    private Array $args;
+    private Array $args = array();
 
     /**
      * @description 包体类容
      *
      * @var string
      */
-    private string $body;
+    private string $body = '';
 
     /**
      * @description 秘钥
@@ -59,7 +59,7 @@ class Json implements ProtocolInterface
      *
      * @var Array
      */
-    private Array $clear;
+    private Array $clear = array();
 
     /**
      * @description 加密类型
@@ -80,14 +80,14 @@ class Json implements ProtocolInterface
      *
      * @var string
      */
-    private string $traceId;
+    private string $traceId = '';
 
     /**
      * @description from
      *
      * @var string
      */
-    private string $from;
+    private string $from = '';
 
     /**
      * @description 构造函数
@@ -138,6 +138,8 @@ class Json implements ProtocolInterface
         $this->path  = $this->clear['p'];
         $this->method = $this->clear['m'];
         $this->args = $this->clear['a'] ?? array();
+        $this->from = $this->clear['f'] ?? '';
+        $this->traceId = $this->clear['t'] ?? '';
 
         return true;
     }
