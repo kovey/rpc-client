@@ -13,6 +13,10 @@ namespace Kovey\Rpc\Client;
 
 use Kovey\Rpc\Client\Protocol\Json;
 use Kovey\Library\Protocol\ProtocolInterface;
+use Kovey\Rpc\Client\Event;
+use Kovey\Event\Dispatch;
+use Kovey\Event\Listener\Listener;
+use Kovey\Event\Listener\ListenerProvider;
 
 class Client
 {
@@ -25,7 +29,10 @@ class Client
      *
      * @var Array
      */
-    private Array $events;
+    private static Array $events = array(
+        'unpack' => Event\Unpack::class,
+        'pack' => Event\Pack::class
+    );
 
     /**
      * @description 底层客户端
@@ -69,6 +76,12 @@ class Client
      */
     private string $error = '';
 
+    private Array $onEvents = array();
+
+    private Dispatch $dispatch;
+
+    private ListenerProvider $provider;
+
     /**
      * @description 构造函数
      *
@@ -88,8 +101,10 @@ class Client
         ));
 
         $this->configs = $configs;
-        $this->events = array();
+        $this->onEvents = array();
         $this->conf = array();
+        $this->provider = new ListenerProvider();
+        $this->dispatch = new Dispatch($this->provider);
     }
 
     /**
@@ -97,17 +112,25 @@ class Client
      *
      * @param string $event
      *
-     * @param callable $callable
+     * @param callable | Array $callable
      *
      * @return Client
      */
-    public function on(string $event, $callable) : Client
+    public function on(string $event, Array | callable $callable) : Client
     {
+        if (!isset(self::$events[$event])) {
+            return $this;
+        }
+
         if (!is_callable($callable)) {
             return $this;
         }
 
-        $this->events[$event] = $callable;
+        $this->onEvents[$event] = $event;
+        $listener = new Listener();
+        $listener->addEvent(self::$events[$event], $callable);
+        $this->provider->addListener($listener);
+
         return $this;
     }
 
@@ -174,8 +197,8 @@ class Client
      */
     public function send(Array $data) : bool
     {
-        if (isset($this->events['pack'])) {
-            $data = call_user_func($this->events['pack'], $data, $this->conf['secret_key'], $this->conf['encrypt_type'] ?? 'aes', true);
+        if (isset($this->onEvents['pack'])) {
+            $data = $this->dispatch->dispatchWithReturn(new Event\Pack($data, $this->conf['secret_key'], $this->conf['encrypt_type'] ?? 'aes'));
         } else {
             $data = Json::pack($data, $this->conf['secret_key'], $this->conf['encrypt_type'] ?? 'aes', true);
         }
@@ -203,8 +226,8 @@ class Client
             return array();
         }
 
-        if (isset($this->events['unpack'])) {
-            $packet = call_user_func($this->events['unpack'], $this->conf['secret_key'], $this->conf['encrypt_type'] ?? 'aes', true);
+        if (isset($this->onEvents['unpack'])) {
+            $packet = $this->dispatch->dispatchWithReturn(new Event\Unpack($packet, $this->conf['secret_key'], $this->conf['encrypt_type'] ?? 'aes'));
         } else {
             $packet = Json::unpack($packet, $this->conf['secret_key'], $this->conf['encrypt_type'] ?? 'aes', true);
         }
