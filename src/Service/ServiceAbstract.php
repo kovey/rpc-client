@@ -68,12 +68,10 @@ abstract class ServiceAbstract
             't' => $this->traceId,
             'f' => $this->getCurrentServiceName()
         ))) {
-            $this->cli->close();
             throw new ProtocolException($this->cli->getError(), 1003, 'send_error');
         }
 
         $result = $this->cli->recv();
-        $this->cli->close();
         if (empty($result)) {
             throw new ProtocolException('resopone is error.', 1000, 'request_error');
         }

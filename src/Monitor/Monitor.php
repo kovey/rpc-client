@@ -50,13 +50,11 @@ class Monitor
             't' => hash('sha256', uniqid('monitor', true) . random_int(0, 9999999)),
             'f' => $this->from
         ))) {
-            $this->cli->close();
             $this->error = $this->cli->getError();
             return false;
         }
 
         $result = $this->cli->recv();
-        $this->cli->close();
 
         if (empty($result)) {
             $this->error = 'response error';

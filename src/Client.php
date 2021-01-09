@@ -24,6 +24,8 @@ class Client
 
     const TIME_OUT = 30;
 
+    private bool $isConnected = false;
+
     /**
      * @description 事件监听
      *
@@ -141,6 +143,10 @@ class Client
      */
     public function connect() : bool
     {
+        if ($this->isConnected) {
+            return $this->isConnected;
+        }
+
         $this->error = '';
         $count = 0;
         do {
@@ -154,7 +160,8 @@ class Client
             $this->conf = $conf;
             $result = $this->cli->connect($this->conf['host'], $this->conf['port']);
             if ($result || intval($this->cli->errCode) == 0) {
-                return true;
+                $this->isConnected = true;
+                return $this->isConnected;
             }
 
             $this->error .= sprintf('connected failure to server: %s:%s,error: %s', $this->conf['host'], $this->conf['port'], socket_strerror($this->cli->errCode)) . PHP_EOL;
@@ -208,7 +215,18 @@ class Client
         }
         $result = $this->cli->send($data);
         if (!$result) {
-            $this->error = sprintf('send failure to server: %s:%s, error: %s', $this->conf['host'], $this->conf['port'], socket_strerror($this->cli->errCode));
+            if ($this->cli->errCode >= 100) {
+                $this->isConnected = false;
+                if (!$this->connect()) {
+                    return false;
+                }
+
+                $result = $this->cli->send($data);
+            }
+
+            if ($result === false) {
+                $this->error = sprintf('send failure to server: %s:%s, error: %s', $this->conf['host'], $this->conf['port'], socket_strerror($this->cli->errCode));
+            }
         }
 
         return $result;
@@ -223,6 +241,7 @@ class Client
     {
         $packet = $this->cli->recv(self::TIME_OUT);
         if (empty($packet)) {
+            $this->isConnected = false;
             return array();
         }
 
@@ -266,5 +285,10 @@ class Client
         }
 
         $this->$name = $val;
+    }
+
+    public function __destruct()
+    {
+        $this->cli->close();
     }
 }
