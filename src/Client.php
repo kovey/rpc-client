@@ -24,6 +24,8 @@ class Client
 
     const TIME_OUT = 30;
 
+    const NETWORK_ERROR = 100;
+
     private bool $isConnected = false;
 
     /**
@@ -215,7 +217,7 @@ class Client
         }
         $result = $this->cli->send($data);
         if (!$result) {
-            if ($this->cli->errCode >= 100) {
+            if ($this->cli->errCode >= self::NETWORK_ERROR) {
                 $this->isConnected = false;
                 if (!$this->connect()) {
                     return false;
