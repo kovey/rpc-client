@@ -1,7 +1,6 @@
 <?php
 /**
- *
- * @description 系统监控进程
+ * @description monitor client
  *
  * @package     Kovey\Rpc\Client
  *

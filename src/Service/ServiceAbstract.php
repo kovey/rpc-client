@@ -1,6 +1,6 @@
 <?php
 /**
- * @description Rpc客户端
+ * @description Rpc client object
  *
  * @package
  *
@@ -18,21 +18,21 @@ use Kovey\Rpc\Client\Client;
 abstract class ServiceAbstract
 {
     /**
-     * @description 客户端链接
+     * @description client
      *
      * @var Kovey\Rpc\Client\Client
      */
     private Client $cli;
 
     /**
-     * @description 配置文件
+     * @description config
      *
      * @var Array
      */
     private Array $conf;
 
     /**
-     * @description 构造
+     * @description construct
      *
      * @param Array $conf
      *
@@ -45,7 +45,7 @@ abstract class ServiceAbstract
     }
 
     /**
-     * @description 调用服务端方法
+     * @description request method of server
      *
      * @param string $method
      *
@@ -55,7 +55,7 @@ abstract class ServiceAbstract
      *
      * @throws ProtocolException
      */
-    public function __call(string $method, Array $args)
+    public function __call(string $method, Array $args) : mixed
     {
         if (!$this->cli->connect()) {
             throw new ProtocolException($this->cli->getError(), 1002, 'connect_error');
@@ -84,14 +84,14 @@ abstract class ServiceAbstract
     }
 
     /**
-     * @description 获取服务名称
+     * @description get service name
      *
      * @return string
      */
     abstract protected function getServiceName() : string;
 
     /**
-     * @description 获取当前服务名称
+     * @description get current service name
      *
      * @return string
      */

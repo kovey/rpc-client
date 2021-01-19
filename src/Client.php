@@ -1,6 +1,6 @@
 <?php
 /**
- * @description 客户端
+ * @description rpc client
  *
  * @package
  *
@@ -29,7 +29,7 @@ class Client
     private bool $isConnected = false;
 
     /**
-     * @description 事件监听
+     * @description events support
      *
      * @var Array
      */
@@ -39,55 +39,70 @@ class Client
     );
 
     /**
-     * @description 底层客户端
+     * @description swoole client
      *
      * @var Swoole\Coroutine\Client
      */
     private \Swoole\Coroutine\Client $cli;
 
     /**
-     * @description 服务端配置
+     * @description configs
      *
      * @var Array
      */
     private Array $configs;
 
     /**
-     * @description 客户端配置
+     * @description client
      *
      * @var Array
      */
     private Array $conf;
 
     /**
-     * @description 当前使用配置
+     * @description current config index
      *
      * @var int
      */
     private int $current = 0;
 
     /**
-     * @description 不可用的配置
+     * @description unavailable configs
      *
      * @var Array
      */
     private Array $unavailables = array();
 
     /**
-     * @description 错误信息
+     * @description error info
      *
      * @var string
      */
     private string $error = '';
 
+    /**
+     * @description events listened
+     *
+     * @var Array
+     */
     private Array $onEvents = array();
 
+    /**
+     * @description event dispatcher
+     *
+     * @var Dispatch
+     */
     private Dispatch $dispatch;
 
+    /**
+     * @description event listener providero
+     *
+     * @var ListenerProvider
+     */
     private ListenerProvider $provider;
 
     /**
-     * @description 构造函数
+     * @description construct
      *
      * @param Array $configs
      *
@@ -112,7 +127,7 @@ class Client
     }
 
     /**
-     * @description 事件监听
+     * @description event listen
      *
      * @param string $event
      *
@@ -139,7 +154,7 @@ class Client
     }
 
     /**
-     * @description 链接服务器端
+     * @description connect to server
      *
      * @return bool
      */
@@ -174,7 +189,7 @@ class Client
     }
 
     /**
-     * @description 获取可用的服务端配置
+     * @description get available config
      *
      * @return Array
      */
@@ -198,7 +213,7 @@ class Client
     }
 
     /**
-     * @description 向服务端发送数据
+     * @description send data to server
      *
      * @param Array $data
      *
@@ -235,7 +250,7 @@ class Client
     }
 
     /**
-     * @description 接收数据
+     * @description receive data from server
      *
      * @return Array
      */
@@ -261,7 +276,7 @@ class Client
     }
 
     /**
-     * @description 获取错误信息
+     * @description get error info
      *
      * @return string
      */
@@ -271,16 +286,16 @@ class Client
     }
 
     /**
-     * @description 关闭链接
+     * @description close connection
      *
-     * @return null
+     * @return void
      */
-    public function close()
+    public function close() : void
     {
         $this->cli->close();
     }
 
-    public function __set(string $name, $val)
+    public function __set(string $name, $val) : void
     {
         if (!isset($this->$name)) {
             return;
