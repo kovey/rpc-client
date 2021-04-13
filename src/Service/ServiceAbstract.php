@@ -65,8 +65,9 @@ abstract class ServiceAbstract
             'p' => $this->getServiceName(),
             'm' => $method,
             'a' => $args,
-            't' => $this->traceId,
-            'f' => $this->getCurrentServiceName()
+            't' => $this->traceId ?? '',
+            'f' => $this->getCurrentServiceName(),
+            's' => $this->spanId ?? ''
         ))) {
             throw new ProtocolException($this->cli->getError(), 1003, 'send_error');
         }
