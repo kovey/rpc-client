@@ -88,6 +88,8 @@ class Json implements ProtocolInterface
      */
     private string $from = '';
 
+    private string $spanId = '';
+
     /**
      * @description construct
      *
@@ -139,6 +141,7 @@ class Json implements ProtocolInterface
         $this->args = $this->clear['a'] ?? array();
         $this->from = $this->clear['f'] ?? '';
         $this->traceId = $this->clear['t'] ?? '';
+        $this->spanId = $this->clear['s'] ?? '';
 
         return true;
     }
@@ -248,5 +251,10 @@ class Json implements ProtocolInterface
         $packet = Encryption::decrypt($encrypt, $secretKey, $type, $isPub);
 
         return json_decode($packet, true);
+    }
+
+    public function getSpanId() : string
+    {
+        return $this->spanId;
     }
 }

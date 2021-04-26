@@ -12,6 +12,7 @@
 namespace Kovey\Rpc\Client\Service;
 
 use Kovey\Library\Exception\ProtocolException;
+use Kovey\Library\Exception\BusiException;
 use Kovey\Rpc\Client\Client;
 
 #[\Attribute]
@@ -77,11 +78,15 @@ abstract class ServiceAbstract
             throw new ProtocolException('resopone is error.', 1000, 'request_error');
         }
 
-        if ($result['type'] !== 'success') {
-            throw new ProtocolException($result['err'], $result['code'], $result['type'], $result['trace'] ?? '');
+        if ($result['type'] === 'success') {
+            return $result['result'];
         }
 
-        return $result['result'];
+        if ($result['type'] === 'busi_exception') {
+            throw new BusiException($result['code'], $result['err']);
+        }
+
+        throw new ProtocolException($result['err'], $result['code'], $result['type'], $result['trace'] ?? '');
     }
 
     /**
