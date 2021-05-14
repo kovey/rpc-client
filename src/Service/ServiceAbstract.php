@@ -83,7 +83,7 @@ abstract class ServiceAbstract
         }
 
         if ($result['type'] === 'busi_exception') {
-            throw new BusiException($result['code'], $result['err']);
+            throw new BusiException($result['err'], $result['code']);
         }
 
         throw new ProtocolException($result['err'], $result['code'], $result['type'], $result['trace'] ?? '');
