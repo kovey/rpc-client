@@ -77,7 +77,7 @@ abstract class ServiceAbstract
 
         $result = $this->cli->recv();
         if (empty($result)) {
-            throw new ProtocolException('resopone is error.', 1000, 'request_error');
+            throw new ProtocolException('resopone is error: ' . $this->cli->getError(), 1000, 'request_error');
         }
 
         if ($result['type'] === 'success') {
