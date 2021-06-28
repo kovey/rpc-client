@@ -259,6 +259,12 @@ class Client
         $packet = $this->cli->recv(self::TIME_OUT);
         if (empty($packet)) {
             $this->isConnected = false;
+            if ($packet === '') {
+                $this->error = 'socket closed by server';
+            } else if ($packet === false) {
+                $this->error = socket_strerror($this->cli->errCode);
+            }
+
             return array();
         }
 

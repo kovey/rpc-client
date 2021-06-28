@@ -14,6 +14,7 @@ namespace Kovey\Rpc\Client\Service;
 use Kovey\Library\Exception\ProtocolException;
 use Kovey\Library\Exception\BusiException;
 use Kovey\Rpc\Client\Client;
+use Kovey\Rpc\Client\Version\Version;
 
 #[\Attribute]
 abstract class ServiceAbstract
@@ -68,7 +69,8 @@ abstract class ServiceAbstract
             'a' => $args,
             't' => $this->traceId ?? '',
             'f' => $this->getCurrentServiceName(),
-            's' => $this->spanId ?? ''
+            's' => $this->spanId ?? '',
+            'v' => Version::VERSION
         ))) {
             throw new ProtocolException($this->cli->getError(), 1003, 'send_error');
         }
