@@ -252,11 +252,13 @@ class Client
     /**
      * @description receive data from server
      *
+     * @param int $timeout = 0
+     *
      * @return Array
      */
-    public function recv() : Array
+    public function recv(int $timeout = 0) : Array
     {
-        $packet = $this->cli->recv(self::TIME_OUT);
+        $packet = $this->cli->recv($timeout > 0 ? $timeout : self::TIME_OUT);
         if (empty($packet)) {
             $this->isConnected = false;
             if ($packet === '') {

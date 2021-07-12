@@ -34,6 +34,13 @@ abstract class ServiceAbstract
     private Array $conf;
 
     /**
+     * @description timeout
+     *
+     * @var int
+     */
+    protected int $timeout = 0;
+
+    /**
      * @description construct
      *
      * @param Array $conf
@@ -75,7 +82,7 @@ abstract class ServiceAbstract
             throw new ProtocolException($this->cli->getError(), 1003, 'send_error');
         }
 
-        $result = $this->cli->recv();
+        $result = $this->cli->recv($this->timeout);
         if (empty($result)) {
             throw new ProtocolException('resopone is error: ' . $this->cli->getError(), 1000, 'request_error');
         }
