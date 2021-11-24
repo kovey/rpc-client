@@ -280,7 +280,7 @@ class Client
             return array();
         }
 
-        return $packet;
+        return $packet['packet'];
     }
 
     /**
