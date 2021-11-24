@@ -224,7 +224,7 @@ class Client
         if (isset($this->onEvents['pack'])) {
             $data = $this->dispatch->dispatchWithReturn(new Event\Pack($data, $this->conf['secret_key'], $this->conf['encrypt_type'] ?? 'aes'));
         } else {
-            $data = Json::pack($data, $this->conf['secret_key'], $this->conf['encrypt_type'] ?? 'aes', true);
+            $data = Json::pack($data, $this->conf['secret_key'], $this->conf['encrypt_type'] ?? 'aes', true, Json::COMPRESS_GZIP);
         }
 
         if (!$data) {
@@ -276,7 +276,7 @@ class Client
             $packet = Json::unpack($packet, $this->conf['secret_key'], $this->conf['encrypt_type'] ?? 'aes', true);
         }
 
-        if (!is_array($packet)) {
+        if (empty($packet['packet']) || !is_array($packet['packet'])) {
             return array();
         }
 

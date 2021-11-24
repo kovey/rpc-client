@@ -30,7 +30,7 @@ class JsonTest extends TestCase
         $this->assertTrue(!empty($encrypt));
 
         $decrypt = Json::unpack($encrypt, $key);
-        $this->assertEquals($data, $decrypt);
+        $this->assertEquals($data, $decrypt['packet']);
     }
 
     public function testPackAnUnpackRsa()
@@ -44,7 +44,7 @@ class JsonTest extends TestCase
         $this->assertTrue(!empty($encrypt));
 
         $decrypt = Json::unpack($encrypt, __DIR__ . '/../crt/private.pem', 'rsa', false);
-        $this->assertEquals($data, $decrypt);
+        $this->assertEquals($data, $decrypt['packet']);
     }
 
     public function testUnpackToJsonObject()

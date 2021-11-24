@@ -88,7 +88,33 @@ class Json implements ProtocolInterface
      */
     private string $from = '';
 
+    /**
+     * @description client program language
+     *
+     * @var string
+     */
+    private string $clientLang;
+
+    /**
+     * @description spanId
+     *
+     * @var string
+     */
     private string $spanId = '';
+
+    /**
+     * @description client version
+     *
+     * @var string
+     */
+    private string $version;
+
+    /**
+     * @description compress
+     *
+     * @var string
+     */
+    private string $compress;
 
     /**
      * @description construct
@@ -109,6 +135,7 @@ class Json implements ProtocolInterface
         $this->secretKey = $key;
         $this->encryptType = $type;
         $this->isPub = $isPub;
+        $this->compress = self::COMPRESS_NO;
     }
 
     /**
@@ -118,7 +145,9 @@ class Json implements ProtocolInterface
      */
     public function parse() : bool
     {
-        $this->clear = self::unpack($this->body, $this->secretKey, $this->encryptType, $this->isPub);
+        $info = self::unpack($this->body, $this->secretKey, $this->encryptType, $this->isPub);
+        $this->compress = $info['compress'];
+        $this->clear = $info['packet'];
 
         if (!is_array($this->clear)) {
             return false;
@@ -207,6 +236,26 @@ class Json implements ProtocolInterface
     }
 
     /**
+     * @description get client language
+     *
+     * @return string
+     */
+    public function getClientLang() : string
+    {
+        return $this->clientLang;
+    }
+
+    /**
+     * @description get client version
+     *
+     * @return string
+     */
+    public function getVersion() : string
+    {
+        return $this->version;
+    }
+
+    /**
      * @description package
      *
      * @param Array $packet
@@ -219,9 +268,14 @@ class Json implements ProtocolInterface
      *
      * @return string
      */
-    public static function pack(Array $packet, string $secretKey, string $type = 'aes', bool $isPub = false) : string
+    public static function pack(Array $packet, string $secretKey, string $type = 'aes', bool $isPub = false, int $compress = self::COMPRESS_NO) : string
     {
         $data = Encryption::encrypt(json_encode($packet), $secretKey, $type, $isPub);
+        if ($compress == self::COMPRESS_GZIP) {
+            $data = gzcompress($data);
+            return pack(self::PACK_TYPE, strlen($data)) . pack(self::PACK_TYPE, $compress) . $data;
+        }
+
         return pack(self::PACK_TYPE, strlen($data)) . $data;
     }
 
@@ -240,21 +294,38 @@ class Json implements ProtocolInterface
      */
     public static function unpack(string $data, string $secretKey, string $type = 'aes', bool $isPub = false) : Array
     {
-        $info = unpack(self::PACK_TYPE, substr($data, self::LENGTH_OFFSET, self::HEADER_LENGTH));
-        $length = $info[1] ?? 0;
+        $info = unpack(self::PACK_TYPE . 'a/' . self::PACK_TYPE . 'b', substr($data, self::LENGTH_OFFSET, self::HEADER_LENGTH_NEW));
+        $compress = $info['b'];
+        if ($compress != self::COMPRESS_GZIP) {
+            $info = unpack(self::PACK_TYPE . 'a', substr($data, self::LENGTH_OFFSET, self::HEADER_LENGTH));
+            $compress = self::COMPRESS_NO;
+        }
+
+        $length = $info['a'];
 
         if (!Util::isNumber($length) || $length < 1) {
             throw new ProtocolException('unpack packet failure', 1005, 'pack_error');
         }
 
-        $encrypt = substr($data, self::BODY_OFFSET, $length);
+        $encrypt = substr($data, $compress == self::COMPRESS_NO ? self::BODY_OFFSET : self::HEADER_LENGTH_NEW, $length);
+        if ($compress == self::COMPRESS_GZIP) {
+            $encrypt = gzuncompress($encrypt, self::COMPRESS_LENGTH);
+        }
         $packet = Encryption::decrypt($encrypt, $secretKey, $type, $isPub);
 
-        return json_decode($packet, true);
+        return array(
+            'compress' => $compress,
+            'packet' => json_decode($packet, true)
+        );
     }
 
     public function getSpanId() : string
     {
         return $this->spanId;
+    }
+
+    public function getCompress() : int
+    {
+        return $this->compress;
     }
 }
