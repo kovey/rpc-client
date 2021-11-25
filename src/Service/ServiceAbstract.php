@@ -15,9 +15,9 @@ use Kovey\Library\Exception\ProtocolException;
 use Kovey\Library\Exception\BusiException;
 use Kovey\Rpc\Client\Client;
 use Kovey\Rpc\Client\Version\Version;
+use Kovey\Library\Trace\TraceInterface;
 
-#[\Attribute]
-abstract class ServiceAbstract
+abstract class ServiceAbstract implements TraceInterface
 {
     /**
      * @description client
@@ -39,6 +39,20 @@ abstract class ServiceAbstract
      * @var int
      */
     protected int $timeout = 0;
+
+    /**
+     * @description trace id
+     *
+     * @var string
+     */
+    protected string $traceId;
+
+    /**
+     * @description span id
+     *
+     * @var string
+     */
+    protected string $spanId;
 
     /**
      * @description construct
@@ -96,6 +110,46 @@ abstract class ServiceAbstract
         }
 
         throw new ProtocolException($result['err'], $result['code'], $result['type'], $result['trace'] ?? '');
+    }
+
+    /**
+     * @description set trace id
+     *
+     * @param string $traceId
+     */
+    public function setTraceId(string $traceId) : void
+    {
+        $this->traceId = $traceId;
+    }
+
+    /**
+     * @description set span id
+     *
+     * @param string $spanId
+     */
+    public function setSpanId(string $spanId) : void
+    {
+        $this->spanId = $spanId;
+    }
+
+    /**
+     * @description get trace id
+     *
+     * @return string
+     */
+    public function getTraceId() : string
+    {
+        return $this->traceId;
+    }
+
+    /**
+     * @description get trace id
+     *
+     * @return string
+     */
+    public function getSpanId() : string
+    {
+        return $this->spanId;
     }
 
     /**

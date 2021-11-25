@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6d1b6925a2ce1b56391f2faf7b433d0d",
+    "content-hash": "31c93cfd356b51c0718a9fbdfee1f344",
     "packages": [
         {
             "name": "kovey/event",
@@ -58,16 +58,16 @@
         },
         {
             "name": "kovey/library",
-            "version": "v2.1.8",
+            "version": "v2.1.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/kovey/library.git",
-                "reference": "f320324d95b61f82bacdc7e4551d140211898998"
+                "reference": "ba1e33bf6d75ae9ae029ac06a601e496cc271e72"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kovey/library/zipball/f320324d95b61f82bacdc7e4551d140211898998",
-                "reference": "f320324d95b61f82bacdc7e4551d140211898998",
+                "url": "https://api.github.com/repos/kovey/library/zipball/ba1e33bf6d75ae9ae029ac06a601e496cc271e72",
+                "reference": "ba1e33bf6d75ae9ae029ac06a601e496cc271e72",
                 "shasum": ""
             },
             "require": {
@@ -75,6 +75,7 @@
                 "php": "^8.0"
             },
             "require-dev": {
+                "phpstan/phpstan": "^1.2",
                 "phpunit/phpunit": "^9.3"
             },
             "type": "library",
@@ -106,9 +107,9 @@
             ],
             "support": {
                 "issues": "https://github.com/kovey/library/issues",
-                "source": "https://github.com/kovey/library/tree/v2.1.8"
+                "source": "https://github.com/kovey/library/tree/v2.1.9"
             },
-            "time": "2021-11-24T08:01:46+00:00"
+            "time": "2021-11-25T07:21:27+00:00"
         }
     ],
     "packages-dev": [
@@ -632,6 +633,70 @@
                 "source": "https://github.com/phpspec/prophecy/tree/1.14.0"
             },
             "time": "2021-09-10T09:02:12+00:00"
+        },
+        {
+            "name": "phpstan/phpstan",
+            "version": "1.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/phpstan/phpstan.git",
+                "reference": "cbe085f9fdead5b6d62e4c022ca52dc9427a10ee"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/cbe085f9fdead5b6d62e4c022ca52dc9427a10ee",
+                "reference": "cbe085f9fdead5b6d62e4c022ca52dc9427a10ee",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.1|^8.0"
+            },
+            "conflict": {
+                "phpstan/phpstan-shim": "*"
+            },
+            "bin": [
+                "phpstan",
+                "phpstan.phar"
+            ],
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.2-dev"
+                }
+            },
+            "autoload": {
+                "files": [
+                    "bootstrap.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "PHPStan - PHP Static Analysis Tool",
+            "support": {
+                "issues": "https://github.com/phpstan/phpstan/issues",
+                "source": "https://github.com/phpstan/phpstan/tree/1.2.0"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/ondrejmirtes",
+                    "type": "github"
+                },
+                {
+                    "url": "https://github.com/phpstan",
+                    "type": "github"
+                },
+                {
+                    "url": "https://www.patreon.com/phpstan",
+                    "type": "patreon"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/phpstan/phpstan",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2021-11-18T14:09:01+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
@@ -1907,7 +1972,6 @@
                     "type": "github"
                 }
             ],
-            "abandoned": true,
             "time": "2020-09-28T06:45:17+00:00"
         },
         {
