@@ -45,14 +45,14 @@ abstract class ServiceAbstract implements TraceInterface
      *
      * @var string
      */
-    protected string $traceId;
+    public string $traceId;
 
     /**
      * @description span id
      *
      * @var string
      */
-    protected string $spanId;
+    public string $spanId;
 
     /**
      * @description construct
@@ -88,9 +88,9 @@ abstract class ServiceAbstract implements TraceInterface
             'p' => $this->getServiceName(),
             'm' => $method,
             'a' => $args,
-            't' => $this->traceId ?? '',
+            't' => $this->traceId,
             'f' => $this->getCurrentServiceName(),
-            's' => $this->spanId ?? '',
+            's' => $this->spanId,
             'v' => Version::VERSION
         ))) {
             throw new ProtocolException($this->cli->getError(), 1003, 'send_error');
